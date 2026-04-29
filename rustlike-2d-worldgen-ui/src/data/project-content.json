@@ -1,0 +1,49 @@
+{
+  "project": {
+    "mapId": "west-postros",
+    "nameRu": "Западный Построс",
+    "nameEn": "West Postros",
+    "isSingleCanonicalMap": true,
+    "seedVariationNoteRu": "Карта всегда одна и та же (West Postros / Западный Построс), но меняется в некоторых пределах в зависимости от сида.",
+    "seedVariationNoteEn": "The map is always the same canonical world (West Postros / Западный Postros), but varies within controlled bounds depending on seed."
+  },
+  "contentPolicy": {
+    "storeUserWorldContentSeparately": true,
+    "editorShouldStayGeneric": true
+  },
+  "canonPresets": {
+    "westPostros": {
+      "worldStructure": {
+        "macroRegions": [
+          { "id": "black-coast", "nameRu": "Чёрное побережье", "nameEn": "Black Coast", "min": 0.0, "max": 0.16, "allowedBiomes": ["ocean", "beach", "grassland"] },
+          { "id": "european-coast", "nameRu": "Европейское побережье", "nameEn": "European Coast", "min": 0.16, "max": 0.32, "allowedBiomes": ["ocean", "beach", "forest"] },
+          { "id": "northern-coast", "nameRu": "Северное побережье", "nameEn": "Northern Coast", "min": 0.32, "max": 0.48, "allowedBiomes": ["ocean", "beach", "mountain"] },
+          { "id": "north-lands", "nameRu": "Северные земли", "nameEn": "Northern Lands", "min": 0.48, "max": 0.64, "allowedBiomes": ["forest", "mountain", "grassland"] },
+          { "id": "middle-lands", "nameRu": "Средние земли", "nameEn": "Middle Lands", "min": 0.64, "max": 0.82, "allowedBiomes": ["grassland", "forest", "beach"] },
+          { "id": "east-postros", "nameRu": "Восточный Построс", "nameEn": "East Postros", "min": 0.82, "max": 0.92, "allowedBiomes": ["grassland", "forest", "mountain"] },
+          { "id": "south-lands", "nameRu": "Южные земли", "nameEn": "Southern Lands", "min": 0.92, "max": 1.01, "allowedBiomes": ["desert", "grassland", "beach"] }
+        ],
+        "coastalBiomes": [
+          { "id": "north-sandy-shores", "nameRu": "Северные песчаные берега", "nameEn": "Northern Sandy Shores" },
+          { "id": "new-shores", "nameRu": "Новые берега", "nameEn": "New Shores" },
+          {
+            "id": "south-shores",
+            "nameRu": "Южные берега",
+            "nameEn": "Southern Shores",
+            "microBiomes": [
+              { "id": "south-stone-shores", "nameRu": "Южные каменные берега", "nameEn": "Southern Rocky Shores" },
+              { "id": "deep-south-shores", "nameRu": "Глубокие берега юга", "nameEn": "Deep Southern Shores" }
+            ]
+          }
+        ],
+        "waterMacroRegions": [
+          { "id": "black-sea", "nameRu": "Чёрное море", "nameEn": "Black Sea" },
+          { "id": "new-sea", "nameRu": "Новое море", "nameEn": "New Sea" },
+          { "id": "warm-sea", "nameRu": "Тёплое море", "nameEn": "Warm Sea" },
+          { "id": "deep-sea", "nameRu": "Глубокое море", "nameEn": "Deep Sea" },
+          { "id": "northern-ocean", "nameRu": "Северный океан", "nameEn": "Northern Ocean" }
+        ]
+      }
+    }
+  }
+}

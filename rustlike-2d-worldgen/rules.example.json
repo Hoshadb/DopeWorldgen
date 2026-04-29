@@ -1,0 +1,85 @@
+{
+  "world": {
+    "width": 256,
+    "height": 256,
+    "seed": 1337,
+    "island_falloff": 1.7
+  },
+  "noise": {
+    "height_scale": 92.0,
+    "moisture_scale": 68.0,
+    "octaves": 5,
+    "lacunarity": 2.0,
+    "gain": 0.5
+  },
+  "biomes": [
+    {
+      "name": "ocean",
+      "min_height": 0.0,
+      "max_height": 0.28,
+      "min_moisture": 0.0,
+      "max_moisture": 1.01,
+      "color": [24, 71, 140]
+    },
+    {
+      "name": "beach",
+      "min_height": 0.28,
+      "max_height": 0.34,
+      "min_moisture": 0.0,
+      "max_moisture": 1.01,
+      "color": [222, 205, 143]
+    },
+    {
+      "name": "desert",
+      "min_height": 0.34,
+      "max_height": 0.72,
+      "min_moisture": 0.0,
+      "max_moisture": 0.35,
+      "color": [213, 178, 95]
+    },
+    {
+      "name": "grassland",
+      "min_height": 0.34,
+      "max_height": 0.72,
+      "min_moisture": 0.35,
+      "max_moisture": 0.7,
+      "color": [104, 164, 74]
+    },
+    {
+      "name": "forest",
+      "min_height": 0.34,
+      "max_height": 0.72,
+      "min_moisture": 0.7,
+      "max_moisture": 1.01,
+      "color": [54, 119, 62]
+    },
+    {
+      "name": "mountain",
+      "min_height": 0.72,
+      "max_height": 1.01,
+      "min_moisture": 0.0,
+      "max_moisture": 1.01,
+      "color": [125, 126, 132]
+    }
+  ],
+  "points_of_interest": [
+    {
+      "id": "military_base",
+      "allowed_biomes": ["grassland", "desert"],
+      "count": 2,
+      "min_distance": 35
+    },
+    {
+      "id": "village",
+      "allowed_biomes": ["grassland", "forest", "beach"],
+      "count": 6,
+      "min_distance": 20
+    },
+    {
+      "id": "radar_station",
+      "allowed_biomes": ["mountain"],
+      "count": 3,
+      "min_distance": 25
+    }
+  ]
+}
