@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
 import './App.css'
 import projectContent from './data/project-content.json'
@@ -59,19 +59,25 @@ const TEXT = {
     sideBottom: 'Снизу',
     generate: 'Сгенерировать',
     randomSeed: 'Случайный сид',
+    grid: 'Сетка',
+    showMetricGrid: 'Включить отображение сетки',
+    zoomIn: 'Приблизить',
+    zoomOut: 'Отдалить',
+    zoomLevel: 'Масштаб',
     devHelp: 'Справка разработчика',
     devText:
       'Добро пожаловать в интерактивный 2д редактор карт, здесь вы можете протестировать идеи своих миров в реальном времени. Настройки по умолчанию: Сид: 1',
     goEditor: 'Перейти к редактору',
     poiCount: 'Точек',
-    reportTitle: 'Отчёт',
-    mapShapeSquare: 'квадратная',
-    mapShapeFreeform: 'произвольная',
+    reportTitle: 'Отчёт генерации',
+    mapShapeSquare: 'Квадрат',
+    mapShapeFreeform: 'Произвольная',
     islandWord: 'остров',
     continentWord: 'материк',
     seasAllSides: 'омываемый с четырёх сторон морями',
     seasCustomSides: 'омываемый морями',
-    reportGenerated: 'Сид: {seed}, была сгенерирована {shape} карта размером {size}, на ней расположен {landDesc}, на ней {total} локаций включая {military} военные локации, {civil} гражданские локации.',
+    reportGenerated:
+      'Сид: {seed}\nРазмер карты: {size}\nТип карты: {shape}\nМоря: {seas}\nЛокации:\nВоенные локации: {military}\nГражданские локации {civil}',
     hints: {
       backHome: 'Вернуться на страницу со справкой разработчика.',
       language: 'Переключить язык интерфейса (Русский/English).',
@@ -91,6 +97,10 @@ const TEXT = {
       generate: 'Применить параметры и сгенерировать карту.',
       randomSeed: 'Случайное значение сида.',
       goEditor: 'Перейти на страницу редактора карты.',
+      showMetricGrid: 'Показать сетку 100 м и 1 км по размеру карты в метрах.',
+      zoomIn: 'Приблизить карту.',
+      zoomOut: 'Отдалить карту.',
+      zoomLevel: 'Изменить масштаб карты.',
     },
   },
   en: {
@@ -148,19 +158,25 @@ const TEXT = {
     sideBottom: 'Bottom',
     generate: 'Generate',
     randomSeed: 'Random seed',
+    grid: 'Grid',
+    showMetricGrid: 'Show metric grid',
+    zoomIn: 'Zoom in',
+    zoomOut: 'Zoom out',
+    zoomLevel: 'Zoom',
     devHelp: 'Developer Help',
     devText:
       'Welcome to the interactive 2D map editor. Here you can test your world ideas in real time. Default settings: Seed: 1',
     goEditor: 'Go to Editor',
     poiCount: 'Points',
-    reportTitle: 'Report',
-    mapShapeSquare: 'square',
-    mapShapeFreeform: 'freeform',
+    reportTitle: 'Generation report',
+    mapShapeSquare: 'Square',
+    mapShapeFreeform: 'Freeform',
     islandWord: 'island',
     continentWord: 'continent',
     seasAllSides: 'surrounded by seas on all four sides',
     seasCustomSides: 'washed by seas',
-    reportGenerated: 'Seed: {seed}. Generated a {shape} map with size {size}. It contains a {landDesc}. Total locations: {total}, including {military} military and {civil} civilian.',
+    reportGenerated:
+      'Seed: {seed}\nMap size: {size}\nMap type: {shape}\nSeas: {seas}\nLocations:\nMilitary locations: {military}\nCivilian locations: {civil}',
     hints: {
       backHome: 'Return to the developer help page.',
       language: 'Switch interface language (Russian/English).',
@@ -180,6 +196,10 @@ const TEXT = {
       generate: 'Apply parameters and generate the map.',
       randomSeed: 'Generate a random seed value.',
       goEditor: 'Open the map editor page.',
+      showMetricGrid: 'Draw 100 m and 1 km grid lines from map size in meters.',
+      zoomIn: 'Zoom in map view.',
+      zoomOut: 'Zoom out map view.',
+      zoomLevel: 'Adjust map zoom level.',
     },
   },
 }
@@ -828,12 +848,35 @@ function rebalanceMicroBiomeCoverage(enabledMap, lockedMap, coverageMap, sibling
   return next
 }
 
+/** World-space metric grid: minor every 100 m, major every 1 km (CSS overlay, % of map extent). */
+function metricGridLayerStyle(mapWidthMeters, mapHeightMeters, zoom = 1) {
+  const w = Math.max(1, mapWidthMeters)
+  const h = Math.max(1, mapHeightMeters)
+  const safeZoom = Math.max(0.5, zoom)
+  const pct100x = Math.min(100, (100 / w) * 100)
+  const pct1000x = Math.min(100, (1000 / w) * 100)
+  const pct100y = Math.min(100, (100 / h) * 100)
+  const pct1000y = Math.min(100, (1000 / h) * 100)
+  const minorLinePx = Math.max(0.5, Math.min(1, 0.5 / safeZoom))
+  const majorLinePx = Math.max(0.6, Math.min(1.4, (1.2 - (Math.max(1, zoom) - 1) * 0.11) / safeZoom))
+  const minorAlpha = zoom < 1 ? 0.14 : 0.08
+  return {
+    backgroundImage: [
+      `repeating-linear-gradient(to right, rgba(255,255,255,${minorAlpha}) 0, rgba(255,255,255,${minorAlpha}) ${minorLinePx}px, transparent ${minorLinePx}px, transparent ${pct100x}%)`,
+      `repeating-linear-gradient(to bottom, rgba(255,255,255,${minorAlpha}) 0, rgba(255,255,255,${minorAlpha}) ${minorLinePx}px, transparent ${minorLinePx}px, transparent ${pct100y}%)`,
+      `repeating-linear-gradient(to right, rgba(255,255,255,0.32) 0, rgba(255,255,255,0.32) ${majorLinePx}px, transparent ${majorLinePx}px, transparent ${pct1000x}%)`,
+      `repeating-linear-gradient(to bottom, rgba(255,255,255,0.32) 0, rgba(255,255,255,0.32) ${majorLinePx}px, transparent ${majorLinePx}px, transparent ${pct1000y}%)`,
+    ].join(', '),
+  }
+}
+
 function EditorPage({ language, onToggleLanguage }) {
   const MAX_MAP_METERS = 100_000
   const MIN_MAP_METERS = 0
   const METERS_PER_TILE = 500
   const MIN_TILES = 16
   const MAX_TILES = 220
+  const MIN_VISIBLE_MAP_RATIO = 0.15
 
   const t = TEXT[language]
   const [isRtgEnabled, setIsRtgEnabled] = useState(true)
@@ -852,6 +895,18 @@ function EditorPage({ language, onToggleLanguage }) {
     right: true,
     bottom: true,
   })
+  const [waterMacroLocked, setWaterMacroLocked] = useState(() =>
+    Object.fromEntries(WEST_POSTROS_WATER_MACROREGIONS_RU.map((r) => [r.id, false])),
+  )
+  const [landMacroLocked, setLandMacroLocked] = useState(() =>
+    Object.fromEntries(WEST_POSTROS_MACROREGIONS_RU.map((r) => [r.id, false])),
+  )
+  const toggleWaterMacroLock = (macroRegionId, checked) => {
+    setWaterMacroLocked((prev) => ({ ...prev, [macroRegionId]: checked }))
+  }
+  const toggleLandMacroLock = (macroRegionId, checked) => {
+    setLandMacroLocked((prev) => ({ ...prev, [macroRegionId]: checked }))
+  }
   const [mapFormat, setMapFormat] = useState('square')
   const [seed, setSeed] = useState(1)
   const [mapWidthMeters, setMapWidthMeters] = useState(20_000)
@@ -878,6 +933,14 @@ function EditorPage({ language, onToggleLanguage }) {
   const [settingsMicroBiomeKey, setSettingsMicroBiomeKey] = useState(null)
   const [settingsShoreId, setSettingsShoreId] = useState(null)
   const [settingsShoreMicroKey, setSettingsShoreMicroKey] = useState(null)
+  const [showMetricGrid, setShowMetricGrid] = useState(true)
+  const [viewportZoom, setViewportZoom] = useState(1)
+  const [isViewportPanning, setIsViewportPanning] = useState(false)
+  const viewportRef = useRef(null)
+  const mapCanvasRef = useRef(null)
+  const viewportPanRef = useRef({ x: 0, y: 0 })
+  const viewportDragRef = useRef(null)
+  const activePointerIdRef = useRef(null)
 
   const width = Math.max(
     MIN_TILES,
@@ -901,20 +964,27 @@ function EditorPage({ language, onToggleLanguage }) {
     .reduce((sum, [, arr]) => sum + arr.length, 0)
   const totalLocations = Object.values(world.pois).reduce((sum, arr) => sum + arr.length, 0)
   const civilianCount = Math.max(0, totalLocations - militaryCount)
-  const seaEnabledCount = Object.values(seaSides).filter(Boolean).length
-  const sizeText = `${(mapWidthMeters / 1000).toFixed(1)}x${(mapHeightMeters / 1000).toFixed(1)} ${t.km}`
+  const widthKm = mapWidthMeters / 1000
+  const heightKm = mapHeightMeters / 1000
+  const formatKmValue = (value) => (Number.isInteger(value) ? String(value) : value.toFixed(1))
+  const sizeText = `${formatKmValue(widthKm)}x${formatKmValue(heightKm)}${t.km}`
   const totalIslandAreaSquareMeters = mapWidthMeters * mapHeightMeters
   const mapShapeText = mapFormat === 'square' ? t.mapShapeSquare : t.mapShapeFreeform
-  const landDesc =
-    mapType === 'island'
-      ? `${t.islandWord} ${seaEnabledCount === 4 ? t.seasAllSides : t.seasCustomSides}`
-      : t.continentWord
+  const seaCode = `${seaSides.left ? 'Л' : ''}${seaSides.top ? 'В' : ''}${seaSides.right ? 'П' : ''}${seaSides.bottom ? 'Н' : ''}`
+  const seaPartsRu = [
+    seaSides.left ? 'Лево' : null,
+    seaSides.top ? 'Верх' : null,
+    seaSides.right ? 'Право' : null,
+    seaSides.bottom ? 'Низ' : null,
+  ].filter(Boolean).join(' ')
+  const seasText = mapType === 'island'
+    ? (seaCode ? `${seaCode} (${seaPartsRu})` : '-')
+    : (language === 'ru' ? '—' : 'n/a')
   const reportText = formatTemplate(t.reportGenerated, {
     seed: activeSeed,
     shape: mapShapeText,
     size: sizeText,
-    landDesc,
-    total: totalLocations,
+    seas: seasText,
     military: militaryCount,
     civil: civilianCount,
   })
@@ -922,6 +992,67 @@ function EditorPage({ language, onToggleLanguage }) {
 
   const regenerate = () => {
     setAppliedSettings({ seed, islandFalloff })
+  }
+  const clampZoom = useCallback((nextZoom) => Math.max(0.5, Math.min(8, nextZoom)), [])
+  const zoomIn = () => setViewportZoom((prev) => clampZoom(prev * 1.15))
+  const zoomOut = () => setViewportZoom((prev) => clampZoom(prev / 1.15))
+  const clampViewportPan = useCallback((pan, zoom) => {
+    const viewportEl = viewportRef.current
+    if (!viewportEl) return pan
+    const rect = viewportEl.getBoundingClientRect()
+    const viewportWidth = rect.width
+    const viewportHeight = rect.height
+    const scaledMapWidth = viewportWidth * zoom
+    const scaledMapHeight = viewportHeight * zoom
+    const minVisibleWidth = viewportWidth * MIN_VISIBLE_MAP_RATIO
+    const minVisibleHeight = viewportHeight * MIN_VISIBLE_MAP_RATIO
+    const maxPanX = Math.max(0, (scaledMapWidth + viewportWidth) / 2 - minVisibleWidth)
+    const maxPanY = Math.max(0, (scaledMapHeight + viewportHeight) / 2 - minVisibleHeight)
+    return {
+      x: Math.max(-maxPanX, Math.min(maxPanX, pan.x)),
+      y: Math.max(-maxPanY, Math.min(maxPanY, pan.y)),
+    }
+  }, [])
+  const applyViewportTransform = useCallback((pan, zoom) => {
+    if (!mapCanvasRef.current) return
+    const clampedPan = clampViewportPan(pan, zoom)
+    viewportPanRef.current = clampedPan
+    mapCanvasRef.current.style.transform = `translate(${clampedPan.x}px, ${clampedPan.y}px) scale(${zoom})`
+  }, [clampViewportPan])
+  const stopViewportPan = () => {
+    if (!viewportDragRef.current) return
+    viewportDragRef.current = null
+    activePointerIdRef.current = null
+    setIsViewportPanning(false)
+  }
+  const startViewportPan = (event) => {
+    if (event.button !== 0) return
+    if (event.target instanceof Element && event.target.closest('.map-zoom-controls')) return
+    event.preventDefault()
+    activePointerIdRef.current = event.pointerId
+    viewportDragRef.current = { x: event.clientX, y: event.clientY }
+    event.currentTarget.setPointerCapture(event.pointerId)
+    setIsViewportPanning(true)
+  }
+  const moveViewportPan = (event) => {
+    if (!viewportDragRef.current) return
+    if (activePointerIdRef.current !== event.pointerId) return
+    event.preventDefault()
+    const deltaX = event.clientX - viewportDragRef.current.x
+    const deltaY = event.clientY - viewportDragRef.current.y
+    viewportDragRef.current = { x: event.clientX, y: event.clientY }
+    const nextPan = {
+      x: viewportPanRef.current.x + deltaX,
+      y: viewportPanRef.current.y + deltaY,
+    }
+    applyViewportTransform(nextPan, viewportZoom)
+  }
+  const endViewportPan = (event) => {
+    if (activePointerIdRef.current !== event.pointerId) return
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId)
+    }
+    stopViewportPan()
   }
   const randomizeSeed = () => setSeed(Math.floor(Math.random() * 1000000))
   const setHeightMeters = (value) => {
@@ -1134,6 +1265,28 @@ function EditorPage({ language, onToggleLanguage }) {
     }
   }, [selectedCanon])
 
+  useEffect(() => {
+    const viewportEl = viewportRef.current
+    if (!viewportEl) return undefined
+    const onWheel = (event) => {
+      event.preventDefault()
+      const factor = event.deltaY < 0 ? 1.15 : 1 / 1.15
+      setViewportZoom((prev) => clampZoom(prev * factor))
+    }
+    viewportEl.addEventListener('wheel', onWheel, { passive: false })
+    return () => viewportEl.removeEventListener('wheel', onWheel)
+  }, [clampZoom])
+
+  useEffect(() => {
+    applyViewportTransform(viewportPanRef.current, viewportZoom)
+  }, [viewportZoom, applyViewportTransform])
+
+  useEffect(() => {
+    const stopOnWindowBlur = () => stopViewportPan()
+    window.addEventListener('blur', stopOnWindowBlur)
+    return () => window.removeEventListener('blur', stopOnWindowBlur)
+  }, [])
+
   return (
     <main className="app">
       <section className="panel">
@@ -1295,6 +1448,17 @@ function EditorPage({ language, onToggleLanguage }) {
               <input type="number" value={seed} onChange={(e) => setSeed(Number(e.target.value) || 0)} title={t.hints.seed} />
             </label>
           </CollapsibleSection>
+          <CollapsibleSection title={t.grid}>
+            <label className="inline-option">
+              <input
+                type="checkbox"
+                checked={showMetricGrid}
+                onChange={(e) => setShowMetricGrid(e.target.checked)}
+                title={t.hints.showMetricGrid}
+              />
+              {t.showMetricGrid}
+            </label>
+          </CollapsibleSection>
           <CollapsibleSection
             title={(
               <>
@@ -1431,8 +1595,22 @@ function EditorPage({ language, onToggleLanguage }) {
                             <ul className="plain-list">
                               {WEST_POSTROS_MACROREGIONS_RU.map((region) => (
                                 <li key={region.id}>
-                                  <span>{formatLabelWithCode(region.name, '-', showInternalCodes)}</span>
-                                  <InfoButton onClick={() => openInfo(formatLabelWithCode(region.name, '-', showInternalCodes), '')} />
+                                  <span className="biome-item biome-inline-info">
+                                    <span className="biome-name">{formatLabelWithCode(region.name, '-', showInternalCodes)}</span>
+                                    <InfoButton onClick={() => openInfo(formatLabelWithCode(region.name, '-', showInternalCodes), '')} />
+                                  </span>
+                                  <div className="list-row spawn-row-controls macro-region-controls">
+                                    <SettingsButton onClick={() => openInfo(formatLabelWithCode(region.name, '-', showInternalCodes), '')} />
+                                    <button
+                                      type="button"
+                                      className="biome-lock-btn"
+                                      onClick={() => toggleLandMacroLock(region.id, !landMacroLocked[region.id])}
+                                      title={landMacroLocked[region.id] ? 'Снять фиксацию' : 'Зафиксировать'}
+                                      aria-label={landMacroLocked[region.id] ? 'unlock land macro region' : 'lock land macro region'}
+                                    >
+                                      {landMacroLocked[region.id] ? '🔒' : '🔓'}
+                                    </button>
+                                  </div>
                                 </li>
                               ))}
                             </ul>
@@ -1444,11 +1622,23 @@ function EditorPage({ language, onToggleLanguage }) {
                             <ul className="plain-list">
                               {WEST_POSTROS_WATER_MACROREGIONS_RU.map((region) => (
                                 <li key={region.id}>
-                                  <span className="biome-item">
+                                  <span className="biome-item biome-inline-info">
                                     <i style={{ background: region.color }} />
-                                    {formatLabelWithCode(region.name, '-', showInternalCodes)}
+                                    <span className="biome-name">{formatLabelWithCode(region.name, '-', showInternalCodes)}</span>
+                                    <InfoButton onClick={() => openInfo(formatLabelWithCode(region.name, '-', showInternalCodes), '')} />
                                   </span>
-                                  <InfoButton onClick={() => openInfo(formatLabelWithCode(region.name, '-', showInternalCodes), '')} />
+                                  <div className="list-row spawn-row-controls macro-region-controls">
+                                    <SettingsButton onClick={() => openInfo(formatLabelWithCode(region.name, '-', showInternalCodes), '')} />
+                                    <button
+                                      type="button"
+                                      className="biome-lock-btn"
+                                      onClick={() => toggleWaterMacroLock(region.id, !waterMacroLocked[region.id])}
+                                      title={waterMacroLocked[region.id] ? 'Снять фиксацию' : 'Зафиксировать'}
+                                      aria-label={waterMacroLocked[region.id] ? 'unlock water macro region' : 'lock water macro region'}
+                                    >
+                                      {waterMacroLocked[region.id] ? '🔒' : '🔓'}
+                                    </button>
+                                  </div>
             </li>
                               ))}
                             </ul>
@@ -1481,6 +1671,13 @@ function EditorPage({ language, onToggleLanguage }) {
                                 <ul className="plain-list">
                                       <li>
                                         <div className="list-row biome-spawn-row">
+                                              <input
+                                                type="checkbox"
+                                                aria-hidden="true"
+                                                checked={false}
+                                                disabled
+                                                style={{ visibility: 'hidden' }}
+                                              />
                                           <span className="biome-item no-color-indicator">{t.unallocatedPercent}</span>
                                           <div className="list-row spawn-row-controls">
                                             <span className="spawn-percent">{formatPercent(unallocatedBiomePercent)}</span>
@@ -1496,13 +1693,15 @@ function EditorPage({ language, onToggleLanguage }) {
                                               onChange={(e) => toggleBiomeEnabled(biome.id, e.target.checked)}
                                               aria-label={`spawn ${biome.id}`}
                                             />
-                                            <span className={`biome-item ${(biomeCoveragePercent[biome.id] ?? 0) === 0 ? 'zero-spawn' : ''}`}>
+                                              <span
+                                                className={`biome-item biome-inline-info ${(biomeCoveragePercent[biome.id] ?? 0) === 0 ? 'zero-spawn' : ''}`}
+                                              >
                                               <i style={{ background: biome.color }} />
-                                              {formatLabelWithCode(localizeName(biome, language), biome.id, showInternalCodes)}
+                                                <span className="biome-name">{formatLabelWithCode(localizeName(biome, language), biome.id, showInternalCodes)}</span>
+                                                <InfoButton onClick={() => openInfo(formatLabelWithCode(localizeName(biome, language), biome.id, showInternalCodes), biome.info)} />
                                             </span>
                                             <div className="list-row spawn-row-controls">
                                               <SettingsButton onClick={() => openBiomeSettings(biome.id)} />
-                                              <InfoButton onClick={() => openInfo(formatLabelWithCode(localizeName(biome, language), biome.id, showInternalCodes), biome.info)} />
                                               <span className="spawn-percent">{formatPercent(biomeCoveragePercent[biome.id] ?? 0)}</span>
                                               <button
                                                 type="button"
@@ -1528,13 +1727,46 @@ function EditorPage({ language, onToggleLanguage }) {
                                                         onChange={(e) => toggleMicroBiomeEnabled(`${biome.id}:${micro.id}`, e.target.checked)}
                                                         aria-label={`spawn ${micro.id}`}
                                                       />
-                                                      <span className={`biome-item micro-biome-item ${(microBiomeCoveragePercent[`${biome.id}:${micro.id}`] ?? 0) === 0 ? 'zero-spawn' : ''}`}>
+                                                      <span
+                                                        className={`biome-item micro-biome-item ${
+                                                          biome.id === 'b2' ? 'biome-inline-info' : ''
+                                                        } ${(microBiomeCoveragePercent[`${biome.id}:${micro.id}`] ?? 0) === 0 ? 'zero-spawn' : ''}`}
+                                                      >
                                                         <i style={{ background: micro.color ?? biome.color }} />
-                                                        {formatLabelWithCode(localizeName(micro, language), micro.id, showInternalCodes)}
+                                                        {biome.id === 'b2' ? (
+                                                          <>
+                                                            <span className="biome-name">
+                                                              {formatLabelWithCode(
+                                                                localizeName(micro, language),
+                                                                micro.id,
+                                                                showInternalCodes,
+                                                              )}
+                                                            </span>
+                                                            <InfoButton
+                                                              onClick={() =>
+                                                                openInfo(
+                                                                  formatLabelWithCode(localizeName(micro, language), micro.id, showInternalCodes),
+                                                                  micro.info,
+                                                                )
+                                                              }
+                                                            />
+                                                          </>
+                                                        ) : (
+                                                          formatLabelWithCode(localizeName(micro, language), micro.id, showInternalCodes)
+                                                        )}
                                                       </span>
                                                       <div className="list-row spawn-row-controls">
                                                         <SettingsButton onClick={() => openMicroBiomeSettings(biome.id, micro.id)} />
-                                                        <InfoButton onClick={() => openInfo(formatLabelWithCode(localizeName(micro, language), micro.id, showInternalCodes), micro.info)} />
+                                                        {biome.id === 'b2' ? null : (
+                                                          <InfoButton
+                                                            onClick={() =>
+                                                              openInfo(
+                                                                formatLabelWithCode(localizeName(micro, language), micro.id, showInternalCodes),
+                                                                micro.info,
+                                                              )
+                                                            }
+                                                          />
+                                                        )}
                                                         <span className="spawn-percent">{formatPercent(microBiomeCoveragePercent[`${biome.id}:${micro.id}`] ?? 0)}</span>
                                                         <button
                                                           type="button"
@@ -1573,13 +1805,17 @@ function EditorPage({ language, onToggleLanguage }) {
                                               onChange={(e) => toggleShoreEnabled(shore.id, e.target.checked)}
                                               aria-label={`spawn ${shore.id}`}
                                             />
-                                            <span className={`biome-item ${(shoreCoveragePercent[shore.id] ?? 0) === 0 ? 'zero-spawn' : ''}`}>
+                                            <span
+                                              className={`biome-item biome-inline-info ${
+                                                (shoreCoveragePercent[shore.id] ?? 0) === 0 ? 'zero-spawn' : ''
+                                              }`}
+                                            >
                                               <i style={{ background: shore.color }} />
-                                              {formatLabelWithCode(shoreName, '-', showInternalCodes)}
+                                              <span className="biome-name">{formatLabelWithCode(shoreName, '-', showInternalCodes)}</span>
+                                              <InfoButton onClick={() => openInfo(formatLabelWithCode(shoreName, '-', showInternalCodes), '')} />
                                             </span>
                                             <div className="list-row spawn-row-controls">
                                               <SettingsButton onClick={() => openShoreSettings(shore.id)} />
-                                              <InfoButton onClick={() => openInfo(formatLabelWithCode(shoreName, '-', showInternalCodes), '')} />
                                               <span className="spawn-percent">{formatPercent(shoreCoveragePercent[shore.id] ?? 0)}</span>
                                               <button
                                                 type="button"
@@ -1605,13 +1841,34 @@ function EditorPage({ language, onToggleLanguage }) {
                                                         onChange={(e) => toggleShoreMicroEnabled(`${shore.id}:${micro.id}`, e.target.checked)}
                                                         aria-label={`spawn ${micro.id}`}
                                                       />
-                                                      <span className={`biome-item micro-biome-item ${(shoreMicroCoveragePercent[`${shore.id}:${micro.id}`] ?? 0) === 0 ? 'zero-spawn' : ''}`}>
-                                                          <i style={{ background: micro.color ?? shore.color }} />
-                                                          {formatLabelWithCode(localizeName(micro, language), micro.id, showInternalCodes)}
+                                                      <span
+                                                        className={`biome-item biome-inline-info micro-biome-item ${
+                                                          (shoreMicroCoveragePercent[`${shore.id}:${micro.id}`] ?? 0) === 0 ? 'zero-spawn' : ''
+                                                        }`}
+                                                      >
+                                                        <i style={{ background: micro.color ?? shore.color }} />
+                                                        <span className="biome-name">
+                                                          {formatLabelWithCode(
+                                                            localizeName(micro, language),
+                                                            showInternalCodes ? '' : micro.id,
+                                                            showInternalCodes,
+                                                          )}
                                                         </span>
+                                                        <InfoButton
+                                                          onClick={() =>
+                                                            openInfo(
+                                                              formatLabelWithCode(
+                                                                localizeName(micro, language),
+                                                                showInternalCodes ? '' : micro.id,
+                                                                showInternalCodes,
+                                                              ),
+                                                              '',
+                                                            )
+                                                          }
+                                                        />
+                                                      </span>
                                                       <div className="list-row spawn-row-controls">
                                                         <SettingsButton onClick={() => openShoreMicroSettings(shore.id, micro.id)} />
-                                                        <InfoButton onClick={() => openInfo(formatLabelWithCode(localizeName(micro, language), micro.id, showInternalCodes), '')} />
                                                         <span className="spawn-percent">{formatPercent(shoreMicroCoveragePercent[`${shore.id}:${micro.id}`] ?? 0)}</span>
                                                         <button
                                                           type="button"
@@ -1652,16 +1909,55 @@ function EditorPage({ language, onToggleLanguage }) {
       </section>
       <section className="map-wrap">
         <div
-          className="map"
+          ref={viewportRef}
+          className={`map-viewport ${isViewportPanning ? 'panning' : ''}`}
+          onPointerDown={startViewportPan}
+          onPointerMove={moveViewportPan}
+          onPointerUp={endViewportPan}
+          onPointerCancel={stopViewportPan}
+          onLostPointerCapture={stopViewportPan}
           style={{
-            gridTemplateColumns: `repeat(${width}, 1fr)`,
-            gridTemplateRows: `repeat(${height}, 1fr)`,
             aspectRatio: `${Math.max(1, width)} / ${Math.max(1, height)}`,
           }}
         >
-          {world.colorMap.flat().map((color, idx) => (
-            <div key={idx} style={{ background: color }} />
-          ))}
+          <div
+            ref={mapCanvasRef}
+            className="map-canvas"
+          >
+            <div
+              className="map"
+              style={{
+                gridTemplateColumns: `repeat(${width}, 1fr)`,
+                gridTemplateRows: `repeat(${height}, 1fr)`,
+              }}
+            >
+              {world.colorMap.flat().map((color, idx) => (
+                <div key={idx} style={{ background: color }} />
+              ))}
+            </div>
+            {showMetricGrid ? (
+              <div
+                className="map-metric-grid-layer"
+                style={metricGridLayerStyle(mapWidthMeters, mapHeightMeters, viewportZoom)}
+                aria-hidden
+              />
+            ) : null}
+          </div>
+          <div className="map-zoom-controls">
+            <button type="button" className="map-zoom-btn" onClick={zoomIn} title={t.hints.zoomIn}>+</button>
+            <button type="button" className="map-zoom-btn" onClick={zoomOut} title={t.hints.zoomOut}>-</button>
+            <label className="map-zoom-slider" title={t.hints.zoomLevel}>
+              <input
+                type="range"
+                min="0.5"
+                max="8"
+                step="0.01"
+                value={viewportZoom}
+                onChange={(event) => setViewportZoom(clampZoom(Number(event.target.value)))}
+              />
+              <span className="map-zoom-value">{Math.round(viewportZoom * 100)}%</span>
+            </label>
+          </div>
         </div>
         <div className="poi-list">
           <details className="report-block">
