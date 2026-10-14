@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
 import './App.css'
 import projectContent from './data/project-content.json'
+import stableMapData from './data/west-postros-stable.json'
 
 const TEXT = {
   ru: {
@@ -59,6 +60,10 @@ const TEXT = {
     sideBottom: 'Снизу',
     generate: 'Сгенерировать',
     randomSeed: 'Случайный сид',
+    loadStableMap: 'Загрузить стабильную карту',
+    stableMapLoaded: 'Стабильная карта загружена',
+    stableMapStatus: 'Показана стабильная (статичная) версия Западного Построса. «Сгенерировать» или «Случайный сид» вернут процедурную генерацию.',
+    stableMapReport: 'Стабильная версия Западного Построса\nРазмер карты: {size}\nТайлов: {tiles}',
     grid: 'Сетка',
     showMetricGrid: 'Включить отображение сетки',
     zoomIn: 'Приблизить',
@@ -96,6 +101,7 @@ const TEXT = {
       islandFalloff: 'Управляет спадом высоты к краям карты.',
       generate: 'Применить параметры и сгенерировать карту.',
       randomSeed: 'Случайное значение сида.',
+      loadStableMap: 'Загрузить статичную стабильную карту Западного Построса: по ней размещаются локации и биомы, пока процедурный генератор настраивается отдельно.',
       goEditor: 'Перейти на страницу редактора карты.',
       showMetricGrid: 'Показать сетку 100 м и 1 км по размеру карты в метрах.',
       zoomIn: 'Приблизить карту.',
@@ -158,6 +164,10 @@ const TEXT = {
     sideBottom: 'Bottom',
     generate: 'Generate',
     randomSeed: 'Random seed',
+    loadStableMap: 'Load stable map',
+    stableMapLoaded: 'Stable map loaded',
+    stableMapStatus: 'Showing the stable (static) West Postros map. "Generate" or "Random seed" switch back to procedural generation.',
+    stableMapReport: 'West Postros stable version\nMap size: {size}\nTiles: {tiles}',
     grid: 'Grid',
     showMetricGrid: 'Show metric grid',
     zoomIn: 'Zoom in',
@@ -195,6 +205,7 @@ const TEXT = {
       islandFalloff: 'Controls terrain drop toward edges.',
       generate: 'Apply parameters and generate the map.',
       randomSeed: 'Generate a random seed value.',
+      loadStableMap: 'Load the static stable West Postros map: locations and biomes are placed on it while the procedural generator is tuned separately.',
       goEditor: 'Open the map editor page.',
       showMetricGrid: 'Draw 100 m and 1 km grid lines from map size in meters.',
       zoomIn: 'Zoom in map view.',
@@ -424,6 +435,21 @@ const CANON_PRESETS = {
 }
 
 const SIZE_PRESETS_KM = [1, 2, 4, 8, 10, 40]
+
+// Static ("stable") West Postros map: one class char per tile, decoded to colours once.
+const STABLE_MAP = (() => {
+  const colorByChar = Object.fromEntries(stableMapData.classes.map((c) => [c.char, c.color]))
+  const classByChar = Object.fromEntries(stableMapData.classes.map((c) => [c.char, c.id]))
+  return {
+    width: stableMapData.meta.width,
+    height: stableMapData.meta.height,
+    widthMeters: stableMapData.meta.widthMeters,
+    heightMeters: stableMapData.meta.heightMeters,
+    colorMap: stableMapData.grid.map((row) => Array.from(row, (ch) => colorByChar[ch] ?? '#1f2937')),
+    classMap: stableMapData.grid.map((row) => Array.from(row, (ch) => classByChar[ch] ?? 'void')),
+    pois: stableMapData.pois ?? [],
+  }
+})()
 
 function clamp01(v) {
   return Math.max(0, Math.min(1, v))
@@ -934,6 +960,8 @@ function EditorPage({ language, onToggleLanguage }) {
   const [settingsShoreId, setSettingsShoreId] = useState(null)
   const [settingsShoreMicroKey, setSettingsShoreMicroKey] = useState(null)
   const [showMetricGrid, setShowMetricGrid] = useState(true)
+  const [stableMapActive, setStableMapActive] = useState(false)
+  const stableMapPrevRef = useRef(null)
   const [viewportZoom, setViewportZoom] = useState(1)
   const [isViewportPanning, setIsViewportPanning] = useState(false)
   const viewportRef = useRef(null)
@@ -942,21 +970,21 @@ function EditorPage({ language, onToggleLanguage }) {
   const viewportDragRef = useRef(null)
   const activePointerIdRef = useRef(null)
 
-  const width = Math.max(
-    MIN_TILES,
-    Math.min(MAX_TILES, Math.round(mapWidthMeters / METERS_PER_TILE)),
-  )
-  const height = Math.max(
-    MIN_TILES,
-    Math.min(MAX_TILES, Math.round(mapHeightMeters / METERS_PER_TILE)),
-  )
+  const width = stableMapActive
+    ? STABLE_MAP.width
+    : Math.max(MIN_TILES, Math.min(MAX_TILES, Math.round(mapWidthMeters / METERS_PER_TILE)))
+  const height = stableMapActive
+    ? STABLE_MAP.height
+    : Math.max(MIN_TILES, Math.min(MAX_TILES, Math.round(mapHeightMeters / METERS_PER_TILE)))
 
   const activeSeed = isRtgEnabled ? seed : appliedSettings.seed
   const activeIslandFalloff = isRtgEnabled ? islandFalloff : appliedSettings.islandFalloff
 
   const world = useMemo(
-    () => generateWorld({ width, height, seed: activeSeed, islandFalloff: activeIslandFalloff, mapType, seaSides, worldStructure, poiRules }),
-    [activeSeed, activeIslandFalloff, width, height, mapType, seaSides, worldStructure, poiRules],
+    () => (stableMapActive
+      ? { colorMap: STABLE_MAP.colorMap, pois: {} }
+      : generateWorld({ width, height, seed: activeSeed, islandFalloff: activeIslandFalloff, mapType, seaSides, worldStructure, poiRules })),
+    [stableMapActive, activeSeed, activeIslandFalloff, width, height, mapType, seaSides, worldStructure, poiRules],
   )
 
   const militaryCount = Object.entries(world.pois)
@@ -980,17 +1008,42 @@ function EditorPage({ language, onToggleLanguage }) {
   const seasText = mapType === 'island'
     ? (seaCode ? `${seaCode} (${seaPartsRu})` : '-')
     : (language === 'ru' ? '—' : 'n/a')
-  const reportText = formatTemplate(t.reportGenerated, {
-    seed: activeSeed,
-    shape: mapShapeText,
-    size: sizeText,
-    seas: seasText,
-    military: militaryCount,
-    civil: civilianCount,
-  })
+  const reportText = stableMapActive
+    ? formatTemplate(t.stableMapReport, { size: sizeText, tiles: `${width}x${height}` })
+    : formatTemplate(t.reportGenerated, {
+      seed: activeSeed,
+      shape: mapShapeText,
+      size: sizeText,
+      seas: seasText,
+      military: militaryCount,
+      civil: civilianCount,
+    })
 
+  const loadStableMap = () => {
+    if (!stableMapActive) {
+      stableMapPrevRef.current = { mapFormat, mapWidthMeters, mapHeightMeters, sizePresetKm }
+    }
+    setStableMapActive(true)
+    setMapFormat('freeform')
+    setMapWidthMeters(STABLE_MAP.widthMeters)
+    setMapHeightMeters(STABLE_MAP.heightMeters)
+    setSizePresetKm(null)
+    setViewportZoom(1)
+  }
+  const leaveStableMap = () => {
+    if (!stableMapActive) return
+    const prev = stableMapPrevRef.current
+    if (prev) {
+      setMapFormat(prev.mapFormat)
+      setMapWidthMeters(prev.mapWidthMeters)
+      setMapHeightMeters(prev.mapHeightMeters)
+      setSizePresetKm(prev.sizePresetKm)
+    }
+    setStableMapActive(false)
+  }
 
   const regenerate = () => {
+    leaveStableMap()
     setAppliedSettings({ seed, islandFalloff })
   }
   const clampZoom = useCallback((nextZoom) => Math.max(0.5, Math.min(8, nextZoom)), [])
@@ -1054,7 +1107,10 @@ function EditorPage({ language, onToggleLanguage }) {
     }
     stopViewportPan()
   }
-  const randomizeSeed = () => setSeed(Math.floor(Math.random() * 1000000))
+  const randomizeSeed = () => {
+    leaveStableMap()
+    setSeed(Math.floor(Math.random() * 1000000))
+  }
   const setHeightMeters = (value) => {
     const clamped = Math.max(MIN_MAP_METERS, Math.min(MAX_MAP_METERS, value))
     setMapHeightMeters(clamped)
@@ -1905,7 +1961,16 @@ function EditorPage({ language, onToggleLanguage }) {
         <div className="buttons">
           <button onClick={regenerate} title={t.hints.generate}>{t.generate}</button>
           <button onClick={randomizeSeed} title={t.hints.randomSeed}>{t.randomSeed}</button>
+          <button
+            type="button"
+            className={stableMapActive ? 'stable-map-btn active' : 'stable-map-btn'}
+            onClick={loadStableMap}
+            title={t.hints.loadStableMap}
+          >
+            {stableMapActive ? t.stableMapLoaded : t.loadStableMap}
+          </button>
         </div>
+        {stableMapActive ? <p className="hint-text">{t.stableMapStatus}</p> : null}
       </section>
       <section className="map-wrap">
         <div

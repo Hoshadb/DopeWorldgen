@@ -762,3 +762,11 @@ button,
       "map";
   }
 }
+
+.stable-map-btn {
+  background: #b45309;
+}
+
+.stable-map-btn.active {
+  background: #15803d;
+}
