@@ -1,0 +1,401 @@
+[
+  {
+    "id": "lbl-macro-01",
+    "layer": "macro",
+    "entityId": "west-postros",
+    "text": "Западный Построс",
+    "x": 0.21,
+    "y": 0.04,
+    "size": "title"
+  },
+  {
+    "id": "lbl-macro-02",
+    "layer": "macro",
+    "entityId": "north-lands",
+    "text": "Северные земли",
+    "x": 0.54,
+    "y": 0.1333,
+    "size": "xl"
+  },
+  {
+    "id": "lbl-macro-03",
+    "layer": "macro",
+    "entityId": "middle-lands",
+    "text": "Средние земли",
+    "x": 0.4775,
+    "y": 0.49,
+    "size": "xl"
+  },
+  {
+    "id": "lbl-macro-04",
+    "layer": "macro",
+    "entityId": "european-coast",
+    "text": "Европейское побережье",
+    "x": 0.06,
+    "y": 0.4833,
+    "rotate": -90,
+    "size": "xl"
+  },
+  {
+    "id": "lbl-macro-05",
+    "layer": "macro",
+    "entityId": "black-coast",
+    "text": "Чёрное побережье",
+    "x": 0.3,
+    "y": 0.84,
+    "size": "xl"
+  },
+  {
+    "id": "lbl-macro-06",
+    "layer": "macro",
+    "entityId": "east-postros",
+    "text": "Восточный Построс",
+    "x": 0.968,
+    "y": 0.4667,
+    "rotate": 90,
+    "size": "xl"
+  },
+  {
+    "id": "lbl-macro-07",
+    "layer": "macro",
+    "entityId": "pomorye",
+    "text": "Поморский край / Поморье",
+    "x": 0.49,
+    "y": 0.7933,
+    "size": "sm"
+  },
+  {
+    "id": "lbl-macro-08",
+    "layer": "macro",
+    "entityId": "northern-ocean",
+    "text": "Северный океан",
+    "x": 0.07,
+    "y": 0.0113,
+    "size": "water"
+  },
+  {
+    "id": "lbl-macro-09",
+    "layer": "macro",
+    "entityId": "west-ocean",
+    "text": "Западный океан",
+    "x": 0.075,
+    "y": 0.07,
+    "size": "water"
+  },
+  {
+    "id": "lbl-macro-10",
+    "layer": "macro",
+    "entityId": "warm-sea",
+    "text": "Тёплое море",
+    "x": 0.486,
+    "y": 0.028,
+    "size": "water"
+  },
+  {
+    "id": "lbl-macro-11",
+    "layer": "macro",
+    "entityId": "new-sea",
+    "text": "Новое море",
+    "x": 0.055,
+    "y": 0.3973,
+    "size": "water"
+  },
+  {
+    "id": "lbl-macro-12",
+    "layer": "macro",
+    "entityId": "black-sea",
+    "text": "Чёрное море",
+    "x": 0.32,
+    "y": 0.9653,
+    "size": "water"
+  },
+  {
+    "id": "lbl-macro-13",
+    "layer": "macro",
+    "entityId": "deep-sea",
+    "text": "Глубокое море",
+    "x": 0.6775,
+    "y": 0.9767,
+    "size": "water"
+  },
+  {
+    "id": "lbl-biome-14",
+    "layer": "biome",
+    "entityId": "b2",
+    "text": "Нетронутые регионы",
+    "x": 0.1575,
+    "y": 0.108
+  },
+  {
+    "id": "lbl-biome-15",
+    "layer": "biome",
+    "entityId": "north-sandy-shores",
+    "text": "Северные песчаные берега",
+    "x": 0.425,
+    "y": 0.09
+  },
+  {
+    "id": "lbl-biome-16",
+    "layer": "biome",
+    "entityId": "b5",
+    "text": "Кислотные земли",
+    "x": 0.6425,
+    "y": 0.1253
+  },
+  {
+    "id": "lbl-biome-17",
+    "layer": "biome",
+    "entityId": "b19",
+    "text": "Мёртвые регионы",
+    "x": 0.925,
+    "y": 0.4547
+  },
+  {
+    "id": "lbl-biome-18",
+    "layer": "biome",
+    "entityId": "b13",
+    "text": "Снежные пустоши",
+    "x": 0.19,
+    "y": 0.3287
+  },
+  {
+    "id": "lbl-biome-19",
+    "layer": "biome",
+    "entityId": "b17",
+    "text": "Стекляные луга",
+    "x": 0.1325,
+    "y": 0.4133
+  },
+  {
+    "id": "lbl-biome-20",
+    "layer": "biome",
+    "entityId": "b21",
+    "text": "Вулканы",
+    "x": 0.23,
+    "y": 0.4067
+  },
+  {
+    "id": "lbl-biome-21",
+    "layer": "biome",
+    "entityId": "b27",
+    "text": "Скалистая пустошь",
+    "x": 0.2165,
+    "y": 0.4647
+  },
+  {
+    "id": "lbl-biome-22",
+    "layer": "biome",
+    "entityId": "new-shores",
+    "text": "Новые берега",
+    "x": 0.0735,
+    "y": 0.4573
+  },
+  {
+    "id": "lbl-biome-23",
+    "layer": "biome",
+    "entityId": "b9",
+    "text": "Лес туманов",
+    "x": 0.556,
+    "y": 0.4347
+  },
+  {
+    "id": "lbl-biome-24",
+    "layer": "biome",
+    "entityId": "b25",
+    "text": "Ржавые пустоши",
+    "x": 0.484,
+    "y": 0.4887
+  },
+  {
+    "id": "lbl-biome-25",
+    "layer": "biome",
+    "entityId": "b26",
+    "text": "Ржавый лес",
+    "x": 0.6825,
+    "y": 0.3487
+  },
+  {
+    "id": "lbl-biome-26",
+    "layer": "biome",
+    "entityId": "b3",
+    "text": "Сажевые дюны",
+    "x": 0.698,
+    "y": 0.4587
+  },
+  {
+    "id": "lbl-biome-27",
+    "layer": "biome",
+    "entityId": "b11",
+    "text": "Кобальтовый лес",
+    "x": 0.826,
+    "y": 0.4553
+  },
+  {
+    "id": "lbl-biome-28",
+    "layer": "biome",
+    "entityId": "b27",
+    "text": "Скалистые пустоши",
+    "x": 0.5325,
+    "y": 0.6267
+  },
+  {
+    "id": "lbl-biome-29",
+    "layer": "biome",
+    "entityId": "b16",
+    "text": "Сухое море",
+    "x": 0.2475,
+    "y": 0.7147
+  },
+  {
+    "id": "lbl-biome-30",
+    "layer": "biome",
+    "entityId": "b20",
+    "text": "Большая пустыня",
+    "x": 0.7675,
+    "y": 0.7233
+  },
+  {
+    "id": "lbl-biome-31",
+    "layer": "biome",
+    "entityId": "b12",
+    "text": "Пустоши",
+    "x": 0.4825,
+    "y": 0.78
+  },
+  {
+    "id": "lbl-biome-32",
+    "layer": "biome",
+    "entityId": "south-shores",
+    "text": "Южные берега",
+    "x": 0.694,
+    "y": 0.85
+  },
+  {
+    "id": "lbl-micro-33",
+    "layer": "micro",
+    "entityId": "b2:mb2.5",
+    "text": "Бурные джунгли",
+    "x": 0.17,
+    "y": 0.1333
+  },
+  {
+    "id": "lbl-micro-34",
+    "layer": "micro",
+    "entityId": "b2:mb2.7",
+    "text": "Древние болота",
+    "x": 0.262,
+    "y": 0.1313
+  },
+  {
+    "id": "lbl-micro-35",
+    "layer": "micro",
+    "entityId": "b2:mb2.1",
+    "text": "Лиственный лес",
+    "x": 0.1025,
+    "y": 0.1513
+  },
+  {
+    "id": "lbl-micro-36",
+    "layer": "micro",
+    "entityId": "b2:mb2.6",
+    "text": "Тропический лес",
+    "x": 0.209,
+    "y": 0.176
+  },
+  {
+    "id": "lbl-micro-37",
+    "layer": "micro",
+    "entityId": "b2:mb2.3",
+    "text": "Сосновый лес",
+    "x": 0.147,
+    "y": 0.1893
+  },
+  {
+    "id": "lbl-micro-38",
+    "layer": "micro",
+    "entityId": "b5:mb5.1",
+    "text": "Кислотные джунгли",
+    "x": 0.72,
+    "y": 0.1453
+  },
+  {
+    "id": "lbl-micro-39",
+    "layer": "micro",
+    "entityId": "b5:mb5.2",
+    "text": "Кислотный лес",
+    "x": 0.6885,
+    "y": 0.1993
+  },
+  {
+    "id": "lbl-micro-40",
+    "layer": "micro",
+    "entityId": "b5:mb5.3",
+    "text": "Кислотные болота",
+    "x": 0.8625,
+    "y": 0.272
+  },
+  {
+    "id": "lbl-micro-41",
+    "layer": "micro",
+    "entityId": "b13:mb13.1",
+    "text": "Ледовые озёра",
+    "x": 0.34,
+    "y": 0.3353
+  },
+  {
+    "id": "lbl-micro-42",
+    "layer": "micro",
+    "entityId": "b13:mb13.2",
+    "text": "Снежные пики",
+    "x": 0.426,
+    "y": 0.366
+  },
+  {
+    "id": "lbl-micro-43",
+    "layer": "micro",
+    "entityId": "b21:mb21.1",
+    "text": "Вулканические отвалы",
+    "x": 0.216,
+    "y": 0.43
+  },
+  {
+    "id": "lbl-micro-44",
+    "layer": "micro",
+    "entityId": "b3:mb3.1",
+    "text": "Сажевый лес",
+    "x": 0.6725,
+    "y": 0.5273
+  },
+  {
+    "id": "lbl-micro-45",
+    "layer": "micro",
+    "entityId": "b20:mb20.1",
+    "text": "Ксерические кустарники",
+    "x": 0.759,
+    "y": 0.6293
+  },
+  {
+    "id": "lbl-micro-46",
+    "layer": "micro",
+    "entityId": "b12:mb12.1",
+    "text": "Мёртвый лес",
+    "x": 0.589,
+    "y": 0.8187
+  },
+  {
+    "id": "lbl-micro-47",
+    "layer": "micro",
+    "entityId": "south-shores:south-stone-shores",
+    "text": "Южные каменные берега",
+    "x": 0.458,
+    "y": 0.854
+  },
+  {
+    "id": "lbl-micro-48",
+    "layer": "micro",
+    "entityId": "south-shores:deep-south-shores",
+    "text": "Глубокие берега юга",
+    "x": 0.4985,
+    "y": 0.904
+  }
+]

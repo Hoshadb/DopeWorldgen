@@ -1,0 +1,39 @@
+[
+  {
+    "id": "north-sandy-shores",
+    "nameRu": "Северные песчаные берега",
+    "nameEn": "Northern sandy shores",
+    "color": "#d9c58a",
+    "source": "ui-list"
+  },
+  {
+    "id": "new-shores",
+    "nameRu": "Новые берега",
+    "nameEn": "New shores",
+    "color": "#b7d4de",
+    "source": "ui-list"
+  },
+  {
+    "id": "south-shores",
+    "nameRu": "Южные берега",
+    "nameEn": "Southern shores",
+    "color": "#c9ad85",
+    "microBiomes": [
+      {
+        "id": "south-stone-shores",
+        "nameRu": "Южные каменные берега",
+        "nameEn": "Southern rocky shores",
+        "color": "#8f8578",
+        "source": "ui-list"
+      },
+      {
+        "id": "deep-south-shores",
+        "nameRu": "Глубокие берега юга",
+        "nameEn": "Deep southern shores",
+        "color": "#4c6f8f",
+        "source": "ui-list"
+      }
+    ],
+    "source": "ui-list"
+  }
+]

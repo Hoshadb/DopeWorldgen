@@ -1,0 +1,45 @@
+[
+  {
+    "id": "black-sea",
+    "nameRu": "Чёрное море",
+    "nameEn": "Black Sea",
+    "color": "#0f3a6b",
+    "source": "ui-list"
+  },
+  {
+    "id": "new-sea",
+    "nameRu": "Новое море",
+    "nameEn": "New Sea",
+    "color": "#1d5f9a",
+    "source": "ui-list"
+  },
+  {
+    "id": "warm-sea",
+    "nameRu": "Тёплое море",
+    "nameEn": "Warm Sea",
+    "color": "#2f9f8f",
+    "source": "ui-list"
+  },
+  {
+    "id": "deep-sea",
+    "nameRu": "Глубокое море",
+    "nameEn": "Deep Sea",
+    "color": "#0b2748",
+    "source": "ui-list"
+  },
+  {
+    "id": "northern-ocean",
+    "nameRu": "Северный океан",
+    "nameEn": "Northern Ocean",
+    "color": "#4f8fb8",
+    "source": "ui-list"
+  },
+  {
+    "id": "west-ocean",
+    "nameRu": "Западный океан",
+    "nameEn": "Western Ocean",
+    "color": "#2f6a96",
+    "source": "sketch",
+    "note": "Подпись на изображении биомов, в списках отсутствовала."
+  }
+]

@@ -1,0 +1,51 @@
+[
+  {
+    "id": "black-coast",
+    "nameRu": "Чёрное побережье",
+    "nameEn": "Black Coast",
+    "source": "ui-list"
+  },
+  {
+    "id": "european-coast",
+    "nameRu": "Европейское побережье",
+    "nameEn": "European Coast",
+    "source": "ui-list"
+  },
+  {
+    "id": "northern-coast",
+    "nameRu": "Северное побережье",
+    "nameEn": "Northern Coast",
+    "source": "ui-list"
+  },
+  {
+    "id": "north-lands",
+    "nameRu": "Северные земли",
+    "nameEn": "Northern Lands",
+    "source": "ui-list"
+  },
+  {
+    "id": "middle-lands",
+    "nameRu": "Средние земли",
+    "nameEn": "Middle Lands",
+    "source": "ui-list"
+  },
+  {
+    "id": "east-postros",
+    "nameRu": "Восточный Построс",
+    "nameEn": "East Postros",
+    "source": "ui-list"
+  },
+  {
+    "id": "south-lands",
+    "nameRu": "Южные земли",
+    "nameEn": "Southern Lands",
+    "source": "ui-list"
+  },
+  {
+    "id": "pomorye",
+    "nameRu": "Поморский край (Поморье)",
+    "nameEn": "Pomorye Region",
+    "source": "sketch",
+    "note": "Подпись на изображении макрорегионов, в списках отсутствовала."
+  }
+]

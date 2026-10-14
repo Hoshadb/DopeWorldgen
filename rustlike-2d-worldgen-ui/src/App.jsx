@@ -3,6 +3,7 @@ import { BrowserRouter, Link, Route, Routes } from 'react-router-dom'
 import './App.css'
 import projectContent from './data/project-content.json'
 import stableMapData from './data/west-postros-stable.json'
+import catalogData from './data/west-postros-catalog.json'
 
 const TEXT = {
   ru: {
@@ -63,7 +64,30 @@ const TEXT = {
     loadStableMap: 'Загрузить стабильную карту',
     stableMapLoaded: 'Стабильная карта загружена',
     stableMapStatus: 'Показана стабильная (статичная) версия Западного Построса. «Сгенерировать» или «Случайный сид» вернут процедурную генерацию.',
-    stableMapReport: 'Стабильная версия Западного Построса\nРазмер карты: {size}\nТайлов: {tiles}',
+    stableMapReport: 'Стабильная версия Западного Построса\nРазмер карты: {size}\nТайлов: {tiles}\nЛокаций: {locations}',
+    locations: 'Локации',
+    locationsShowAll: 'Показать все',
+    locationsHideAll: 'Скрыть все',
+    locationSettings: 'Локация',
+    locKind: 'Тип',
+    locCode: 'Код',
+    locParent: 'Входит в',
+    locTag: 'Метка',
+    locTagHostile: 'враждебная',
+    locTagFriendly: 'дружественная',
+    locTagSpecial: 'особая',
+    locSafeZone: 'Безопасная зона (Safe Zone)',
+    locPosition: 'Положение на стабильной карте',
+    locZone: 'Зона под точкой',
+    layerMacro: 'Макро',
+    layerMicro: 'Микро',
+    layerLocations: 'Лок',
+    layerBiomes: 'Био',
+    layerMacroHint: 'Скрыть/показать названия Макрорегионов',
+    layerMicroHint: 'Скрыть/показать названия Микробиомов',
+    layerLocationsHint: 'Скрыть/показать названия Локаций',
+    layerBiomesHint: 'Скрыть/показать названия Биомов',
+    layersStableOnly: 'Подписи доступны на стабильной карте. Нажмите «Загрузить стабильную карту».',
     grid: 'Сетка',
     showMetricGrid: 'Включить отображение сетки',
     zoomIn: 'Приблизить',
@@ -167,7 +191,30 @@ const TEXT = {
     loadStableMap: 'Load stable map',
     stableMapLoaded: 'Stable map loaded',
     stableMapStatus: 'Showing the stable (static) West Postros map. "Generate" or "Random seed" switch back to procedural generation.',
-    stableMapReport: 'West Postros stable version\nMap size: {size}\nTiles: {tiles}',
+    stableMapReport: 'West Postros stable version\nMap size: {size}\nTiles: {tiles}\nLocations: {locations}',
+    locations: 'Locations',
+    locationsShowAll: 'Show all',
+    locationsHideAll: 'Hide all',
+    locationSettings: 'Location',
+    locKind: 'Type',
+    locCode: 'Code',
+    locParent: 'Part of',
+    locTag: 'Mark',
+    locTagHostile: 'hostile',
+    locTagFriendly: 'friendly',
+    locTagSpecial: 'special',
+    locSafeZone: 'Safe Zone',
+    locPosition: 'Position on the stable map',
+    locZone: 'Zone under the point',
+    layerMacro: 'Macro',
+    layerMicro: 'Micro',
+    layerLocations: 'Loc',
+    layerBiomes: 'Bio',
+    layerMacroHint: 'Hide/show Macro region names',
+    layerMicroHint: 'Hide/show Micro-biome names',
+    layerLocationsHint: 'Hide/show Location names',
+    layerBiomesHint: 'Hide/show Biome names',
+    layersStableOnly: 'Labels are available on the stable map. Press "Load stable map".',
     grid: 'Grid',
     showMetricGrid: 'Show metric grid',
     zoomIn: 'Zoom in',
@@ -267,83 +314,14 @@ const WEST_POSTROS_STRUCTURE = {
   ...(projectContent.canonPresets?.westPostros?.worldStructure ?? {}),
 }
 
-const WEST_POSTROS_MACROREGIONS_RU = [
-  { id: 'black-coast', name: 'Чёрное побережье' },
-  { id: 'european-coast', name: 'Европейское побережье' },
-  { id: 'northern-coast', name: 'Северное побережье' },
-  { id: 'north-lands', name: 'Северные земли' },
-  { id: 'middle-lands', name: 'Средние земли' },
-  { id: 'east-postros', name: 'Восточный Построс' },
-  { id: 'south-lands', name: 'Южные земли' },
-]
+// Regions, biomes, shores and locations live in rustlike-2d-worldgen/catalog (see its README).
+const WEST_POSTROS_MACROREGIONS_RU = catalogData.macroRegions.map((r) => ({ id: r.id, name: r.nameRu }))
 
-const WEST_POSTROS_WATER_MACROREGIONS_RU = [
-  { id: 'black-sea', name: 'Чёрное море', color: '#0f3a6b' },
-  { id: 'new-sea', name: 'Новое море', color: '#1d5f9a' },
-  { id: 'warm-sea', name: 'Тёплое море', color: '#2f9f8f' },
-  { id: 'deep-sea', name: 'Глубокое море', color: '#0b2748' },
-  { id: 'northern-ocean', name: 'Северный океан', color: '#4f8fb8' },
-]
+const WEST_POSTROS_WATER_MACROREGIONS_RU = catalogData.waterRegions.map((r) => ({ id: r.id, name: r.nameRu, color: r.color }))
 
-const WEST_POSTROS_SHORE_BIOMES = [
-  { id: 'north-sandy-shores', nameRu: 'Северные песчаные берега', nameEn: 'Northern sandy shores', color: '#d9c58a' },
-  { id: 'new-shores', nameRu: 'Новые берега', nameEn: 'New shores', color: '#b7d4de' },
-  {
-    id: 'south-shores',
-    nameRu: 'Южные берега',
-    nameEn: 'Southern shores',
-    color: '#c9ad85',
-    microBiomes: [
-      { id: 'south-stone-shores', nameRu: 'Южные каменные берега', nameEn: 'Southern rocky shores', color: '#8f8578' },
-      { id: 'deep-south-shores', nameRu: 'Глубокие берега юга', nameEn: 'Deep southern shores', color: '#4c6f8f' },
-    ],
-  },
-]
+const WEST_POSTROS_SHORE_BIOMES = catalogData.shores
 
-const WEST_POSTROS_CONTENT_BIOMES = [
-  { id: 'b1', nameRu: 'Октинские курумы', nameEn: 'Oktinsk kurums', color: '#8D8D8D', info: 'Октинские каменные россыпи' },
-  {
-    id: 'b2',
-    nameRu: 'Нетронутые регионы',
-    nameEn: 'Untouched regions',
-    color: '#5FAF5F',
-    info: 'Биом расположен в основном на территории Северного Построса. Биом красивый и приятный, высокая густая трава, лиственные леса и поляны. Обилие животной фауны, но всё ещё высокое радиационное заражение.',
-    microBiomes: [
-      { id: 'mb2.1', nameRu: 'Лиственный лес', nameEn: 'Deciduous forest', color: '#5f9f5f', info: null },
-      { id: 'mb2.2', nameRu: 'Джунгли', nameEn: 'Jungle', color: '#2f7f3f', info: null },
-      { id: 'mb2.3', nameRu: 'Сосновый лес', nameEn: 'Pine forest', color: '#2e5f3f', info: null },
-      { id: 'mb2.4', nameRu: 'Нетронутые болота', nameEn: 'Untouched swamps', color: '#4b6b44', info: 'Болота и топи' },
-    ],
-  },
-  { id: 'b3', nameRu: 'Сажевые дюны', nameEn: 'Soot dunes', color: '#7A5A48', info: null },
-  { id: 'b4', nameRu: 'Ксерические кустарники', nameEn: 'Xeric shrublands', color: '#8FA25A', info: null },
-  { id: 'b5', nameRu: 'Кислотные земли', nameEn: 'Acid lands', color: '#A6C431', info: null },
-  { id: 'b6', nameRu: 'Кислотные болота', nameEn: 'Acid swamps', color: '#6D8F2A', info: null },
-  { id: 'b7', nameRu: 'Кислотный лес', nameEn: 'Acid forest', color: '#4E8A3E', info: null },
-  { id: 'b8', nameRu: 'Мёртвый лес', nameEn: 'Dead forest', color: '#5C5A52', info: null },
-  { id: 'b9', nameRu: 'Лес туманов', nameEn: 'Misty forest', color: '#6E8F8A', info: null },
-  { id: 'b10', nameRu: 'Сажевый лес', nameEn: 'Soot forest', color: '#4B4B4B', info: null },
-  { id: 'b11', nameRu: 'Кобальтовый лес', nameEn: 'Cobalt forest', color: '#2E5F8A', info: null },
-  { id: 'b12', nameRu: 'Пустоши', nameEn: 'Wastelands', color: '#8A7D6A', info: null },
-  { id: 'b13', nameRu: 'Снежные пустоши', nameEn: 'Winter Wastelands', color: '#C7D4E3', info: null },
-  { id: 'b14', nameRu: 'Каменистые пустоши', nameEn: 'Rocky Wastelands', color: '#6F6A63', info: null },
-  { id: 'b15', nameRu: 'Песчаные барханы', nameEn: 'Sand dunes', color: '#D8BC72', info: null },
-  { id: 'b16', nameRu: 'Сухое море', nameEn: 'Dried sea', color: '#A79B87', info: null },
-  {
-    id: 'b17',
-    nameRu: 'Стекляные луга',
-    nameEn: 'Glass Meadows',
-    color: '#7FCFC8',
-    info: 'Поля поросшие когда-то густой травой превратились в опасную для ног любой живности скатерть острых шипов. Трава превратилась во что-то хрупкое и острое напоминающее стекло. На транспорте здесь не проедешь. Ноги нужны стальные. Может здесь получится быть незарейженым? Рейдерам придётся в силовой броне прилетать на вертолёте…',
-  },
-  { id: 'b18', nameRu: 'Мусорные навалы', nameEn: 'Garbage Piles', color: '#7B6D58', info: null },
-  { id: 'b19', nameRu: 'Мёртвые регионы', nameEn: 'Dead Regions', color: '#625E58', info: null },
-  { id: 'b20', nameRu: 'Большая пустыня', nameEn: 'Great Desert', color: '#CFA85A', info: null },
-  { id: 'b21', nameRu: 'Вулканы', nameEn: 'Volcanoes', color: '#9A3B2E', info: null },
-  { id: 'b22', nameRu: 'Базальтовые разливы', nameEn: 'Basalt Floodplains', color: '#3F434A', info: null },
-  { id: 'b23', nameRu: 'Чёрные дюны', nameEn: 'Black dunes', color: '#2F2C2E', info: null },
-  { id: 'b24', nameRu: 'Бурелом', nameEn: 'Windbreak', color: '#4E5A3A', info: null },
-]
+const WEST_POSTROS_CONTENT_BIOMES = catalogData.biomes
 
 const DEFAULT_BIOME_COVERAGE_PERCENT = WEST_POSTROS_CONTENT_BIOMES.reduce((acc, biome) => {
   acc[biome.id] = 0
@@ -450,6 +428,79 @@ const STABLE_MAP = (() => {
     pois: stableMapData.pois ?? [],
   }
 })()
+
+const KIND_LABELS = {
+  settlement: { ru: 'Поселения', en: 'Settlements' },
+  industrial: { ru: 'Промышленность', en: 'Industry' },
+  military: { ru: 'Военные объекты', en: 'Military' },
+  science: { ru: 'Научные объекты', en: 'Science' },
+  medical: { ru: 'Медицина', en: 'Medical' },
+  service: { ru: 'Сервис и торговля', en: 'Services & trade' },
+  transport: { ru: 'Транспорт', en: 'Transport' },
+  infrastructure: { ru: 'Инфраструктура', en: 'Infrastructure' },
+  landmark: { ru: 'Достопримечательности', en: 'Landmarks' },
+  nature: { ru: 'Природные объекты', en: 'Nature' },
+  danger: { ru: 'Опасные места', en: 'Hazards' },
+}
+const LOCATION_KIND_ORDER = Object.keys(KIND_LABELS)
+const LOCATION_TAG_COLORS = { hostile: '#ef4444', friendly: '#22c55e', special: '#60a5fa' }
+const ZONE_NAMES = Object.fromEntries(stableMapData.classes.map((c) => [c.id, c.nameRu]))
+
+function compareLocationCodes(a, b) {
+  if (a.code && b.code) {
+    const pa = a.code.split('.').map(Number)
+    const pb = b.code.split('.').map(Number)
+    for (let i = 0; i < Math.max(pa.length, pb.length); i += 1) {
+      const d = (pa[i] ?? -1) - (pb[i] ?? -1)
+      if (d !== 0) return d
+    }
+    return 0
+  }
+  if (a.code) return -1
+  if (b.code) return 1
+  return a.nameRu.localeCompare(b.nameRu, 'ru')
+}
+
+const LOCATIONS_BY_CODE = Object.fromEntries(catalogData.locations.filter((l) => l.code).map((l) => [l.code, l]))
+const LOCATIONS_BY_PARENT = {}
+const TOP_LOCATIONS_BY_KIND = {}
+for (const loc of [...catalogData.locations].sort(compareLocationCodes)) {
+  if (loc.parentCode) {
+    ;(LOCATIONS_BY_PARENT[loc.parentCode] ??= []).push(loc)
+  } else {
+    ;(TOP_LOCATIONS_BY_KIND[loc.kind] ??= []).push(loc)
+  }
+}
+
+// English names for map labels, keyed by entity id ("b2", "b2:mb2.1", "north-lands", ...).
+const ENTITY_NAME_EN = (() => {
+  const m = { 'west-postros': 'West Postros' }
+  for (const r of [...catalogData.macroRegions, ...catalogData.waterRegions]) m[r.id] = r.nameEn
+  for (const b of [...catalogData.biomes, ...catalogData.shores]) {
+    m[b.id] = b.nameEn
+    for (const mb of b.microBiomes ?? []) m[`${b.id}:${mb.id}`] = mb.nameEn
+  }
+  return m
+})()
+
+function locationDisplayName(loc, language, showCode) {
+  const name = formatLabelWithCode(localizeName(loc, language), loc.code, showCode)
+  return loc.safeZone ? `${name} [Safe Zone]` : name
+}
+
+function locationDetails(loc, language, t) {
+  const parent = loc.parentCode ? LOCATIONS_BY_CODE[loc.parentCode] : null
+  const lines = [
+    `${t.locKind}: ${KIND_LABELS[loc.kind]?.[language] ?? loc.kind}`,
+    `${t.locCode}: ${loc.code ?? '—'}${loc.codeUncertain ? ' (?)' : ''}`,
+  ]
+  if (parent) lines.push(`${t.locParent}: ${formatLabelWithCode(localizeName(parent, language), parent.code, true)}`)
+  if (loc.tag) lines.push(`${t.locTag}: ${t[`locTag${loc.tag[0].toUpperCase()}${loc.tag.slice(1)}`]}`)
+  if (loc.safeZone) lines.push(t.locSafeZone)
+  lines.push(`${t.locPosition}: ${(loc.x * 100).toFixed(1)}% × ${(loc.y * 100).toFixed(1)}%`)
+  lines.push(`${t.locZone}: ${ZONE_NAMES[loc.stableZone] ?? loc.stableZone}`)
+  return lines.join('\n')
+}
 
 function clamp01(v) {
   return Math.max(0, Math.min(1, v))
@@ -634,6 +685,79 @@ function generateWorld({ width, height, seed, islandFalloff, mapType, seaSides, 
   }
 
   return { colorMap, pois: samplePois(biomeMap, seed + 404, poiRules) }
+}
+
+function LocationItem({ loc, language, showCodes, hiddenLocations, onToggle, onInfo, onDetails }) {
+  const children = (loc.code && LOCATIONS_BY_PARENT[loc.code]) || []
+  const hidden = Boolean(hiddenLocations[loc.id])
+  return (
+    <li>
+      <div className="list-row biome-spawn-row">
+        <input
+          type="checkbox"
+          checked={!hidden}
+          onChange={(e) => onToggle(loc.id, e.target.checked)}
+          aria-label={`show ${loc.id}`}
+        />
+        <span className={`biome-item biome-inline-info ${hidden ? 'zero-spawn' : ''}`}>
+          <i style={{ background: LOCATION_TAG_COLORS[loc.tag] ?? '#94a3b8' }} />
+          <span className="biome-name">{locationDisplayName(loc, language, showCodes)}</span>
+          <InfoButton onClick={() => onInfo(loc)} />
+        </span>
+        <div className="list-row spawn-row-controls location-controls">
+          <SettingsButton onClick={() => onDetails(loc)} />
+        </div>
+      </div>
+      {children.length ? (
+        <ul className="plain-list location-children">
+          {children.map((child) => (
+            <LocationItem
+              key={child.id}
+              loc={child}
+              language={language}
+              showCodes={showCodes}
+              hiddenLocations={hiddenLocations}
+              onToggle={onToggle}
+              onInfo={onInfo}
+              onDetails={onDetails}
+            />
+          ))}
+        </ul>
+      ) : null}
+    </li>
+  )
+}
+
+function MapLabelsLayer({ layers, language, hiddenLocations }) {
+  const place = (o) => ({
+    left: `${o.x * 100}%`,
+    top: `${o.y * 100}%`,
+    ...(o.rotate ? { transform: `translate(-50%, -50%) rotate(${o.rotate}deg)` } : null),
+  })
+  return (
+    <div className="map-labels" aria-hidden>
+      {catalogData.labels
+        .filter((l) => layers[l.layer])
+        .map((l) => (
+          <span key={l.id} className={`map-label map-label-${l.layer} ${l.size ? `size-${l.size}` : ''}`} style={place(l)}>
+            {language === 'en' ? ENTITY_NAME_EN[l.entityId] ?? l.text : l.text}
+          </span>
+        ))}
+      {layers.location
+        ? catalogData.locations
+            .filter((l) => !hiddenLocations[l.id])
+            .map((l) => (
+              <span
+                key={l.id}
+                className={`map-label map-label-location tag-${l.tag ?? 'none'} ${l.parentCode ? 'is-sub' : ''}`}
+                style={place(l)}
+              >
+                {locationDisplayName(l, language, true)}
+              </span>
+            ))
+        : null}
+    </div>
+  )
 }
 
 function LanguageToggle({ language, onToggle, tooltip }) {
@@ -962,6 +1086,8 @@ function EditorPage({ language, onToggleLanguage }) {
   const [showMetricGrid, setShowMetricGrid] = useState(true)
   const [stableMapActive, setStableMapActive] = useState(false)
   const stableMapPrevRef = useRef(null)
+  const [mapLayers, setMapLayers] = useState({ macro: true, biome: true, micro: false, location: false })
+  const [hiddenLocations, setHiddenLocations] = useState({})
   const [viewportZoom, setViewportZoom] = useState(1)
   const [isViewportPanning, setIsViewportPanning] = useState(false)
   const viewportRef = useRef(null)
@@ -1009,7 +1135,7 @@ function EditorPage({ language, onToggleLanguage }) {
     ? (seaCode ? `${seaCode} (${seaPartsRu})` : '-')
     : (language === 'ru' ? '—' : 'n/a')
   const reportText = stableMapActive
-    ? formatTemplate(t.stableMapReport, { size: sizeText, tiles: `${width}x${height}` })
+    ? formatTemplate(t.stableMapReport, { size: sizeText, tiles: `${width}x${height}`, locations: catalogData.locations.length })
     : formatTemplate(t.reportGenerated, {
       seed: activeSeed,
       shape: mapShapeText,
@@ -1134,6 +1260,21 @@ function EditorPage({ language, onToggleLanguage }) {
   }
 
   const openInfo = (title, content) => setInfoModal({ open: true, title, content: content ?? '' })
+  const toggleMapLayer = (key) => setMapLayers((prev) => ({ ...prev, [key]: !prev[key] }))
+  const toggleLocationVisible = (id, visible) => {
+    setHiddenLocations((prev) => {
+      const next = { ...prev }
+      if (visible) delete next[id]
+      else next[id] = true
+      return next
+    })
+  }
+  const setAllLocationsVisible = (visible) => {
+    setHiddenLocations(visible ? {} : Object.fromEntries(catalogData.locations.map((l) => [l.id, true])))
+  }
+  const openLocationInfo = (loc) => openInfo(locationDisplayName(loc, language, true), loc.info)
+  const openLocationDetails = (loc) =>
+    openInfo(`${t.locationSettings}: ${locationDisplayName(loc, language, true)}`, locationDetails(loc, language, t))
   const openBiomeSettings = (biomeId) => setSettingsBiomeId(biomeId)
   const openMicroBiomeSettings = (biomeId, microBiomeId) => setSettingsMicroBiomeKey(`${biomeId}:${microBiomeId}`)
   const openShoreSettings = (shoreId) => setSettingsShoreId(shoreId)
@@ -1956,6 +2097,46 @@ function EditorPage({ language, onToggleLanguage }) {
                 </details>
               </div>
             </details>
+            <details className="nested-section" open>
+              <summary>
+                {t.locations} <span className="section-selected">({catalogData.locations.length})</span>
+              </summary>
+              <div className="nested-body biomes-tree">
+                {selectedCanon === 'west-postros' ? (
+                  <>
+                    <div className="buttons location-bulk">
+                      <button type="button" className="preset-btn" onClick={() => setAllLocationsVisible(true)}>{t.locationsShowAll}</button>
+                      <button type="button" className="preset-btn" onClick={() => setAllLocationsVisible(false)}>{t.locationsHideAll}</button>
+                    </div>
+                    {LOCATION_KIND_ORDER.filter((kind) => TOP_LOCATIONS_BY_KIND[kind]?.length).map((kind) => (
+                      <details key={kind} className="nested-section" open={kind === 'settlement'}>
+                        <summary>
+                          {KIND_LABELS[kind][language]} <span className="section-selected">({TOP_LOCATIONS_BY_KIND[kind].length})</span>
+                        </summary>
+                        <div className="nested-body">
+                          <ul className="plain-list">
+                            {TOP_LOCATIONS_BY_KIND[kind].map((loc) => (
+                              <LocationItem
+                                key={loc.id}
+                                loc={loc}
+                                language={language}
+                                showCodes={showInternalCodes}
+                                hiddenLocations={hiddenLocations}
+                                onToggle={toggleLocationVisible}
+                                onInfo={openLocationInfo}
+                                onDetails={openLocationDetails}
+                              />
+                            ))}
+                          </ul>
+                        </div>
+                      </details>
+                    ))}
+                  </>
+                ) : (
+                  <p className="hint-text">{t.infoMissing}</p>
+                )}
+              </div>
+            </details>
           </CollapsibleSection>
         </div>
         <div className="buttons">
@@ -2007,6 +2188,9 @@ function EditorPage({ language, onToggleLanguage }) {
                 aria-hidden
               />
             ) : null}
+            {stableMapActive ? (
+              <MapLabelsLayer layers={mapLayers} language={language} hiddenLocations={hiddenLocations} />
+            ) : null}
           </div>
           <div className="map-zoom-controls">
             <button type="button" className="map-zoom-btn" onClick={zoomIn} title={t.hints.zoomIn}>+</button>
@@ -2022,6 +2206,26 @@ function EditorPage({ language, onToggleLanguage }) {
               />
               <span className="map-zoom-value">{Math.round(viewportZoom * 100)}%</span>
             </label>
+            <div className="map-layer-buttons" role="group" aria-label="layers">
+              {[
+                ['macro', t.layerMacro, t.layerMacroHint],
+                ['micro', t.layerMicro, t.layerMicroHint],
+                ['location', t.layerLocations, t.layerLocationsHint],
+                ['biome', t.layerBiomes, t.layerBiomesHint],
+              ].map(([key, label, hint]) => (
+                <button
+                  key={key}
+                  type="button"
+                  className={`map-layer-btn ${stableMapActive && mapLayers[key] ? 'active' : ''}`}
+                  aria-pressed={stableMapActive && mapLayers[key]}
+                  disabled={!stableMapActive}
+                  onClick={() => toggleMapLayer(key)}
+                  title={stableMapActive ? hint : `${hint}. ${t.layersStableOnly}`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
         <div className="poi-list">

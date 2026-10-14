@@ -1,0 +1,366 @@
+[
+  {
+    "id": "b1",
+    "nameRu": "Октинские курумы",
+    "nameEn": "Oktinsk kurums",
+    "color": "#8D8D8D",
+    "info": "Октинские каменные россыпи",
+    "source": "ui-list"
+  },
+  {
+    "id": "b2",
+    "nameRu": "Нетронутые регионы",
+    "nameEn": "Untouched regions",
+    "color": "#5FAF5F",
+    "info": "Биом расположен в основном на территории Северного Построса. Биом красивый и приятный, высокая густая трава, лиственные леса и поляны. Обилие животной фауны, но всё ещё высокое радиационное заражение.",
+    "microBiomes": [
+      {
+        "id": "mb2.1",
+        "nameRu": "Лиственный лес",
+        "nameEn": "Deciduous forest",
+        "color": "#5f9f5f",
+        "info": null,
+        "source": "ui-list"
+      },
+      {
+        "id": "mb2.2",
+        "nameRu": "Джунгли",
+        "nameEn": "Jungle",
+        "color": "#2f7f3f",
+        "info": null,
+        "source": "ui-list"
+      },
+      {
+        "id": "mb2.3",
+        "nameRu": "Сосновый лес",
+        "nameEn": "Pine forest",
+        "color": "#2e5f3f",
+        "info": null,
+        "source": "ui-list"
+      },
+      {
+        "id": "mb2.4",
+        "nameRu": "Нетронутые болота",
+        "nameEn": "Untouched swamps",
+        "color": "#4b6b44",
+        "info": "Болота и топи",
+        "source": "ui-list"
+      },
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb2.5",
+        "nameRu": "Бурные джунгли",
+        "nameEn": "Stormy jungle",
+        "color": "#2f7f3f"
+      },
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb2.6",
+        "nameRu": "Тропический лес",
+        "nameEn": "Tropical forest",
+        "color": "#3f8f4f"
+      },
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb2.7",
+        "nameRu": "Древние болота",
+        "nameEn": "Ancient swamps",
+        "color": "#30291f"
+      }
+    ],
+    "source": "ui-list"
+  },
+  {
+    "id": "b3",
+    "nameRu": "Сажевые дюны",
+    "nameEn": "Soot dunes",
+    "color": "#7A5A48",
+    "info": null,
+    "source": "ui-list",
+    "microBiomes": [
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb3.1",
+        "nameRu": "Сажевый лес",
+        "nameEn": "Soot forest",
+        "color": "#545858",
+        "aliasOfBiomeId": "b10"
+      }
+    ]
+  },
+  {
+    "id": "b4",
+    "nameRu": "Ксерические кустарники",
+    "nameEn": "Xeric shrublands",
+    "color": "#8FA25A",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b5",
+    "nameRu": "Кислотные земли",
+    "nameEn": "Acid lands",
+    "color": "#A6C431",
+    "info": null,
+    "source": "ui-list",
+    "microBiomes": [
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb5.1",
+        "nameRu": "Кислотные джунгли",
+        "nameEn": "Acid jungle",
+        "color": "#827036"
+      },
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb5.2",
+        "nameRu": "Кислотный лес",
+        "nameEn": "Acid forest",
+        "color": "#8e8241",
+        "aliasOfBiomeId": "b7"
+      },
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb5.3",
+        "nameRu": "Кислотные болота",
+        "nameEn": "Acid swamps",
+        "color": "#929046",
+        "aliasOfBiomeId": "b6"
+      }
+    ]
+  },
+  {
+    "id": "b6",
+    "nameRu": "Кислотные болота",
+    "nameEn": "Acid swamps",
+    "color": "#6D8F2A",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b7",
+    "nameRu": "Кислотный лес",
+    "nameEn": "Acid forest",
+    "color": "#4E8A3E",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b8",
+    "nameRu": "Мёртвый лес",
+    "nameEn": "Dead forest",
+    "color": "#5C5A52",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b9",
+    "nameRu": "Лес туманов",
+    "nameEn": "Misty forest",
+    "color": "#6E8F8A",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b10",
+    "nameRu": "Сажевый лес",
+    "nameEn": "Soot forest",
+    "color": "#4B4B4B",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b11",
+    "nameRu": "Кобальтовый лес",
+    "nameEn": "Cobalt forest",
+    "color": "#2E5F8A",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b12",
+    "nameRu": "Пустоши",
+    "nameEn": "Wastelands",
+    "color": "#8A7D6A",
+    "info": null,
+    "source": "ui-list",
+    "microBiomes": [
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb12.1",
+        "nameRu": "Мёртвый лес",
+        "nameEn": "Dead forest",
+        "color": "#070707",
+        "aliasOfBiomeId": "b8"
+      }
+    ]
+  },
+  {
+    "id": "b13",
+    "nameRu": "Снежные пустоши",
+    "nameEn": "Winter Wastelands",
+    "color": "#C7D4E3",
+    "info": null,
+    "source": "ui-list",
+    "microBiomes": [
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb13.1",
+        "nameRu": "Ледовые озёра",
+        "nameEn": "Ice lakes",
+        "color": "#b7d4de"
+      },
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb13.2",
+        "nameRu": "Снежные пики",
+        "nameEn": "Snow peaks",
+        "color": "#e3edf7"
+      }
+    ]
+  },
+  {
+    "id": "b14",
+    "nameRu": "Каменистые пустоши",
+    "nameEn": "Rocky Wastelands",
+    "color": "#6F6A63",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b15",
+    "nameRu": "Песчаные барханы",
+    "nameEn": "Sand dunes",
+    "color": "#D8BC72",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b16",
+    "nameRu": "Сухое море",
+    "nameEn": "Dried sea",
+    "color": "#A79B87",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b17",
+    "nameRu": "Стекляные луга",
+    "nameEn": "Glass Meadows",
+    "color": "#7FCFC8",
+    "info": "Поля поросшие когда-то густой травой превратились в опасную для ног любой живности скатерть острых шипов. Трава превратилась во что-то хрупкое и острое напоминающее стекло. На транспорте здесь не проедешь. Ноги нужны стальные. Может здесь получится быть незарейженым? Рейдерам придётся в силовой броне прилетать на вертолёте…",
+    "source": "ui-list"
+  },
+  {
+    "id": "b18",
+    "nameRu": "Мусорные навалы",
+    "nameEn": "Garbage Piles",
+    "color": "#7B6D58",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b19",
+    "nameRu": "Мёртвые регионы",
+    "nameEn": "Dead Regions",
+    "color": "#625E58",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b20",
+    "nameRu": "Большая пустыня",
+    "nameEn": "Great Desert",
+    "color": "#CFA85A",
+    "info": null,
+    "source": "ui-list",
+    "microBiomes": [
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb20.1",
+        "nameRu": "Ксерические кустарники",
+        "nameEn": "Xeric shrublands",
+        "color": "#e3bd91",
+        "aliasOfBiomeId": "b4"
+      }
+    ]
+  },
+  {
+    "id": "b21",
+    "nameRu": "Вулканы",
+    "nameEn": "Volcanoes",
+    "color": "#9A3B2E",
+    "info": null,
+    "source": "ui-list",
+    "microBiomes": [
+      {
+        "info": null,
+        "source": "sketch",
+        "id": "mb21.1",
+        "nameRu": "Вулканические отвалы",
+        "nameEn": "Volcanic dumps",
+        "color": "#5a5e5f"
+      }
+    ]
+  },
+  {
+    "id": "b22",
+    "nameRu": "Базальтовые разливы",
+    "nameEn": "Basalt Floodplains",
+    "color": "#3F434A",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b23",
+    "nameRu": "Чёрные дюны",
+    "nameEn": "Black dunes",
+    "color": "#2F2C2E",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "id": "b24",
+    "nameRu": "Бурелом",
+    "nameEn": "Windbreak",
+    "color": "#4E5A3A",
+    "info": null,
+    "source": "ui-list"
+  },
+  {
+    "info": null,
+    "source": "sketch",
+    "id": "b25",
+    "nameRu": "Ржавые пустоши",
+    "nameEn": "Rust Wastes",
+    "color": "#8b6547"
+  },
+  {
+    "info": null,
+    "source": "sketch",
+    "id": "b26",
+    "nameRu": "Ржавый лес",
+    "nameEn": "Rusty Forest",
+    "color": "#7a4f35"
+  },
+  {
+    "info": null,
+    "source": "sketch",
+    "id": "b27",
+    "nameRu": "Скалистые пустоши",
+    "nameEn": "Craggy Wastelands",
+    "color": "#9a8b73",
+    "note": "На изображении есть подписи «Скалистые пустоши» и «Скалистая пустошь»."
+  }
+]
